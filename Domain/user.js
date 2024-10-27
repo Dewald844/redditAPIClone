@@ -5,7 +5,8 @@ import {readFromFileStream, appendToFileStream} from '../Helpers/databaseControl
 
 // Public methods
 export const createUser = async (name, email, password) => {
-    const new_user_id = await readUsers().length + 1;
+    const existingUsers = await readUsers();
+    const new_user_id = existingUsers.length + 1;
     const hashedPassword = await generateHashedPassword(password);
     let user = {
         user_id: new_user_id,

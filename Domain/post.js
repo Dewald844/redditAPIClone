@@ -1,17 +1,19 @@
-import { appendToFileStream, readFromFileStream, rewriteToFileStream } from "../Helpers/databaseController"
+import { appendToFileStream, readFromFileStream, rewriteToFileStream } from "../Helpers/databaseController.js";
 
 
 // public methods
 
 export const createPost = async (title, content, user_id) => {
-    const new_post_id = await readPosts().length + 1
+    const existing_posts = await readPosts()
+    const new_post_id = existing_posts.length + 1
+    console.log('New post id' + new_post_id);
     let post = {
         post_id: new_post_id,
         post_title: title,
         post_content: content,
         created_by: user_id,
-        upvoteCount: [],
-        downvoteCount:[]
+        upvoteArray: [],
+        downvoteArray:[]
     }
     return post;
 }
@@ -27,8 +29,8 @@ export const upvotePostX = async (post_id, user_id) => {
             post_title: post_to_update.post_title,
             post_content: post_to_update.post_content,
             created_by: post_to_update.created_by,
-            upvoteCount: post_to_update.upvoteCount.push(user_id),
-            downvoteCount: post_to_update.downvoteCount
+            upvoteArray: post_to_update.upvoteArray.push(user_id),
+            downvoteArray: post_to_update.downvoteArray
         }
         return await updatePostDatabase(updated_post);
     }
@@ -45,8 +47,8 @@ export const downvotePostX = async (post_id, user_id) => {
             post_title: post_to_update.post_title,
             post_content: post_to_update.post_content,
             created_by: post_to_update.created_by,
-            upvoteCount: post_to_update.upvoteCount,
-            downvoteCount: post_to_update.downvoteCount.push[user_id]
+            upvoteArray: post_to_update.upvoteArray,
+            downvoteArray: post_to_update.downvoteArray.push[user_id]
         }
         return await updatePostDatabase(updated_post);
     }
@@ -70,8 +72,8 @@ export const updatePostContentX = async (post_id, new_content, user_id) => {
                 post_title: post_to_update.post_title,
                 post_content: new_content,
                 created_by: post_to_update.created_by,
-                upvoteCount: post_to_update.upvoteCount,
-                downvoteCount: post_to_update.downvoteCount
+                upvoteArray: post_to_update.upvoteArray,
+                downvoteArray: post_to_update.downvoteArray
             }
             return await updatePostDatabase(updated_post);
         } else {
@@ -92,14 +94,20 @@ export const updatePostTitleX = async (post_id, new_title, user_id) => {
                 post_title: new_title,
                 post_content: post_to_update.post_content,
                 created_by: post_to_update.created_by,
-                upvoteCount: post_to_update.upvoteCount,
-                downvoteCount: post_to_update.downvoteCount
+                upvoteArray: post_to_update.upvoteArray,
+                downvoteArray: post_to_update.downvoteArray
             }
             return await updatePostDatabase(updated_post);
         } else {
             throw "User not authorised to update post title"
         }
     }
+}
+
+export const readAllPostsbyUser = async (user_id) => {
+    const all_posts = await readPosts()
+    let user_posts = all_posts.filter(p => p.created_by === user_id);
+    return user_posts;
 }
 
 // Private methods
@@ -131,8 +139,8 @@ const headerMap = [
     {id: 'post_title', title: 'post_title'},
     {id: 'post_content', title: 'post_content'},
     {id: 'created_by', title: 'created_by'},
-    {id: 'upvoteCount', title: 'upvoteCount'},
-    {id: 'downvoteCount', title: 'downvoteCount'}
+    {id: 'upvoteArray', title: 'upvoteArray'},
+    {id: 'downvoteArray', title: 'downvoteArray'}
 ];
 
 const filename = 'Database/posts.csv';
@@ -141,7 +149,7 @@ const readPosts = async () => {
     return await readFromFileStream(filename)
 }
 
-const writePosts = async (post) => {
+export const writePosts = async (post) => {
     return await appendToFileStream(filename, headerMap, post);
 }
 
@@ -149,10 +157,4 @@ const updatePostDatabase = async (new_post) => {
     const current_posts = await readPosts();
     const updated_posts = current_posts.map(p => editPost(p, new_post));
     return await rewriteToFileStream(filename, headerMap, updated_posts);
-}
-
-const readAllPostsbyUser = async (user_id) => {
-    const all_posts = await readPosts()
-    let user_posts = all_posts.filter(p => p.created_by === user_id);
-    return user_posts;
 }
