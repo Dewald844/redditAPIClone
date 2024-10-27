@@ -1,17 +1,15 @@
 import bcrypt from 'bcrypt';
-import csv_reader from 'csv-parser';
-import csv_writer from 'csv-writer';
-import fs from 'fs';
+import {readFromFileStream, writeToFileStream} from '../Helpers/databaseController.js';
 
 // User domain model and methods
 
 // Public methods
 export const createUser = async (id, name, email, password) => {
     const hashedPassword = await generateHashedPassword(password);
-    let user = { 
-        user_id: id, 
-        user_name: name, 
-        email_address: email, 
+    let user = {
+        user_id: id,
+        user_name: name,
+        email_address: email,
         user_password: hashedPassword
     };
 
@@ -69,42 +67,19 @@ const generateHashedPassword = async (password) => {
 
 // Reader methods
 
-export const readUsers = async () =>  {
-
-    let users = [];
-
-    fs.createReadStream('Database/users.csv')
-        .pipe(csv_reader())
-        .on('data', (row) => {
-            users.push(row);
-        })
-        .on('end', () => {
-            console.log('CSV file successfully processed');
-        })
-        .on('error', (error) => {
-            console.log("Error encountered reading users from database" + error);
-        });
-
-    return users;
+export const readUsers = async () => {
+    return await readFromFileStream('Database/users.csv');
 }
 
 // Writer methods
 
-export const writeUsers = async (users) => {
-    const csvWriter = csv_writer.createObjectCsvWriter({
-        path: 'Database/users.csv',
-        header: [
-            {id: 'user_id', title: 'USER_ID'},
-            {id: 'user_name', title: 'USER_NAME'},
-            {id: 'email_address', title: 'EMAIL_ADDRESS'},
-            {id: 'user_password', title: 'USER_PASSWORD'}
-        ]
-    });
+export const writeUsers = async (user) => {
+    const headerMap = [
+        {id: 'user_id', title: 'user_id'},
+        {id: 'user_name', title: 'user_name'},
+        {id: 'email_address', title: 'email_address'},
+        {id: 'user_password', title: 'user_password'}
+    ];
 
-    try {
-        await csvWriter.writeRecords(users);
-        console.log("CSV file successfully written");
-    } catch (err) {
-        console.log("Error writing CSV file: " + err);
-    }
+    await writeToFileStream('Database/users.csv', headerMap, user);
 }
