@@ -4,10 +4,11 @@ import {readFromFileStream, writeToFileStream} from '../Helpers/databaseControll
 // User domain model and methods
 
 // Public methods
-export const createUser = async (id, name, email, password) => {
+export const createUser = async (name, email, password) => {
+    const new_user_id = await readUsers().length + 1;
     const hashedPassword = await generateHashedPassword(password);
     let user = {
-        user_id: id,
+        user_id: new_user_id,
         user_name: name,
         email_address: email,
         user_password: hashedPassword
@@ -16,11 +17,29 @@ export const createUser = async (id, name, email, password) => {
     return user;
 }
 
-export const userLogin = async (enteredPassword, passwordFromDatabase) => {
+const confirmLogin = async (enteredPassword, passwordFromDatabase) => {
     if (await comparePassword(enteredPassword, passwordFromDatabase)) {
         return true
     } else {
         return "Invalid email or password";
+    }
+}
+
+export const userLogin = async (email, password) => {
+    let users = await readUsers();
+
+    console.log('users loaded : ' + users);
+
+    let user = users.find(u => u.email_address.trim().toLowerCase() === email.trim().toLowerCase());
+
+    if (!user) {
+        res.send(email + ' not found!');
+    } else {
+        if (await userLogin(email, password, user.user_password)) {
+            return user
+        } else {
+            return null
+        }
     }
 }
 
