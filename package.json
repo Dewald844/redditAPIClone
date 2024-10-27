@@ -2,6 +2,7 @@
   "name": "reddit_api",
   "version": "1.0.0",
   "description": "Minimal reddit api clone (Backend only)",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,6 +18,10 @@
   },
   "homepage": "https://github.com/Dewald844/redditAPIClone#readme",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "csv-parser": "^3.0.0",
+    "csv-reader": "^1.0.12",
+    "csv-writer": "^1.6.0",
     "express": "^4.21.1"
   }
 }
