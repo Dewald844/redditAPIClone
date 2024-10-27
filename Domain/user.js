@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import {readFromFileStream, writeToFileStream} from '../Helpers/databaseController.js';
+import {readFromFileStream, appendToFileStream} from '../Helpers/databaseController.js';
 
 // User domain model and methods
 
@@ -17,14 +17,6 @@ export const createUser = async (name, email, password) => {
     return user;
 }
 
-const confirmLogin = async (enteredPassword, passwordFromDatabase) => {
-    if (await comparePassword(enteredPassword, passwordFromDatabase)) {
-        return true
-    } else {
-        return "Invalid email or password";
-    }
-}
-
 export const userLogin = async (email, password) => {
     let users = await readUsers();
 
@@ -35,7 +27,7 @@ export const userLogin = async (email, password) => {
     if (!user) {
         res.send(email + ' not found!');
     } else {
-        if (await userLogin(email, password, user.user_password)) {
+        if (await confirmLogin(password, user.user_password)) {
             return user
         } else {
             return null
@@ -53,6 +45,14 @@ const comparePassword = async (password, hashed_password) => {
             return result;
         }
     })
+}
+
+const confirmLogin = async (enteredPassword, passwordFromDatabase) => {
+    if (await comparePassword(enteredPassword, passwordFromDatabase)) {
+        return true
+    } else {
+        return "Invalid email or password";
+    }
 }
 
 const generateHashedPassword = async (password) => {
@@ -84,21 +84,21 @@ const generateHashedPassword = async (password) => {
     }
 };
 
-// Reader methods
+// Database methods
+
+const headerMap = [
+    {id: 'user_id', title: 'user_id'},
+    {id: 'user_name', title: 'user_name'},
+    {id: 'email_address', title: 'email_address'},
+    {id: 'user_password', title: 'user_password'}
+];
+
+const filename = 'Database/users.csv'
 
 export const readUsers = async () => {
-    return await readFromFileStream('Database/users.csv');
+    return await readFromFileStream(filename);
 }
 
-// Writer methods
-
 export const writeUsers = async (user) => {
-    const headerMap = [
-        {id: 'user_id', title: 'user_id'},
-        {id: 'user_name', title: 'user_name'},
-        {id: 'email_address', title: 'email_address'},
-        {id: 'user_password', title: 'user_password'}
-    ];
-
-    await writeToFileStream('Database/users.csv', headerMap, user);
+    await appendToFileStream(filename, headerMap, user);
 }

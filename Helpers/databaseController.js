@@ -21,7 +21,7 @@ export const readFromFileStream = async (filename) => {
     });
 };
 
-export const writeToFileStream = async (filename, headerMap, data) => {
+export const appendToFileStream = async (filename, headerMap, data) => {
     const csvWriter = csv_writer.createObjectCsvWriter({
         path: filename,
         header: headerMap,
@@ -31,6 +31,20 @@ export const writeToFileStream = async (filename, headerMap, data) => {
     try {
         await csvWriter.writeRecords([data]);
         console.log("CSV file successfully written");
+    } catch (err) {
+        console.log("Error writing CSV file: " + err);
+    }
+};
+
+export const rewriteToFileStream = async (filename, headerMap, data) => {
+    const csvWriter = csv_writer.createObjectCsvWriter({
+        path: filename,
+        header: headerMap,
+    });
+
+    try {
+        await csvWriter.writeRecords(data);
+        console.log("CSV file successfully updated");
     } catch (err) {
         console.log("Error writing CSV file: " + err);
     }
