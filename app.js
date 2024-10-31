@@ -1,7 +1,15 @@
 import express from 'express';
 
 import { createUser, userLogin } from './Domain/user.js';
-import { createPost, upvotePostX, downvotePostX } from './Domain/post.js';
+import {
+    createPost,
+    upvotePostX,
+    downvotePostX,
+    readAllPostsByUser,
+    deletePostX,
+    updatePostTitleX,
+    updatePostContentX
+} from './Domain/post.js';
 
 const app = express();
 const port = 3000;
@@ -11,6 +19,7 @@ app.get('/', (req, res) => {
 });
 
 // ======================= User API calls =====================
+
 // User create API
 app.post('/user/create/name/:name/email/:email/password/:password', async (req, res) => {
    const name     = req.params.name;
@@ -34,6 +43,7 @@ app.post('/user/login/email/:email/password/:password', async (req, res) => {
 });
 
 // ======================= Post API calls =====================
+
 // Post create API
 app.post('/post/create/title/:title/content/:content/user/:user', async (req, res) => {
     let title = req.params.title;
@@ -47,6 +57,7 @@ app.post('/post/create/title/:title/content/:content/user/:user', async (req, re
     }
 });
 
+// Upvote Post API
 app.post('/post/upvote/post/:post/user/:user', async (req, res) => {
     console.log("trying to upvote post");
     let post_id = req.params.post;
@@ -59,6 +70,7 @@ app.post('/post/upvote/post/:post/user/:user', async (req, res) => {
     }
 });
 
+// Down vote Post API
 app.post('/post/downvote/post/:post/user/:user', async (req, res) => {
     console.log("trying to upvote post");
     let post_id = req.params.post;
@@ -71,7 +83,60 @@ app.post('/post/downvote/post/:post/user/:user', async (req, res) => {
     }
 });
 
- // =======================  Startup code  =====================
- app.listen(port, () => {
+// Read all posts by user
+app.get('/post/read/user/:user', async (req, res) => {
+    console.log("Reading posts create by user");
+    let user_id = Number(req.params.user);
+    try {
+        const posts_by_user = await readAllPostsByUser(user_id);
+        res.send(posts_by_user)
+    } catch (e) {
+        res.send ("Error reading post create by user : " + user_id + " : " + e);
+    }
+})
+
+// Delete post API
+app.delete('/post/delete/post/:post/user/:user', async (req, res) => {
+    console.log("trying to delete post");
+    let post_id = Number(req.params.post);
+    let user_id = Number(req.params.user);
+    try {
+        await deletePostX(post_id, user_id);
+        res.send("Post deleted!");
+    } catch (e) {
+        res.send(e);
+    }
+});
+
+// Update post content API
+app.post('/post/update/title/:title/post/:post/user/:user', async (req, res) => {
+    console.log("trying to update post title");
+    let post_id = Number(req.params.post);
+    let user_id = Number(req.params.user);
+    let new_title = req.params.title;
+    try {
+        await updatePostTitleX(post_id, new_title, user_id);
+        res.send("Post title updated!");
+    } catch (e) {
+        res.send(e);
+    }
+});
+
+// Update post content API
+app.post('/post/update/content/:content/post/:post/user/:user', async (req, res) => {
+    console.log("trying to update post content");
+    let post_id = Number(req.params.post);
+    let user_id = Number(req.params.user);
+    let new_content = req.params.content;
+    try {
+        await updatePostContentX(post_id, new_content, user_id);
+        res.send("Post content updated!");
+    } catch (e) {
+        res.send(e);
+    }
+});
+
+// =======================  Startup code  =====================
+app.listen(port, () => {
      console.log(`Example app listening at http://localhost:${port}`);
 })

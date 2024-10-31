@@ -15,6 +15,109 @@ export const createPost = async (title, content, user_id) => {
     return post_id;
 }
 
+export const upvotePostX = async (post_id, user_id) => {
+    let post_to_update = await readPostByPostId(post_id);
+    if (!post_to_update){
+        throw ("Post not found when trying to upvote. Post Id : " + post_id );
+    } else {
+        let upArr = createVoteArrayFromDatabase(post_to_update['upvotearray'])
+        console.log("Checking : " + upArr + "For : " + user_id);
+        const exist = upArr.includes(user_id)
+        if (!exist){
+            upArr.push(user_id)
+            await updatePostUpvote(post_id, upArr);
+        } else {
+            throw "User already up voted this post";
+        }
+    }
+}
+
+export const downvotePostX = async (post_id, user_id) => {
+    let post_to_update = await readPostByPostId(post_id);
+    if (!post_to_update){
+        throw ("Post not found when trying to upvote. Post Id : " + post_id );
+    } else {
+        let downArr = createVoteArrayFromDatabase(post_to_update['downvotearray'])
+        console.log("Checking : " + downArr + "For : " + user_id);
+        const exist = downArr.includes(user_id)
+        if (!exist){
+            downArr.push(user_id)
+            await updatePostDownVote(post_id, downArr);
+        } else {
+            throw "User already up voted this post";
+        }
+    }
+}
+
+export const deletePostX = async (post_id, user_id) => {
+    const raw_post = await readPostByPostId(post_id);
+    const post = mapToDomainType(raw_post);
+    if (confirmPostEditX(post_id, post.created_by, user_id, post_id)){
+        return await deletePost(post_id);
+    } else {
+        throw "User not authorised to delete post"
+    }
+}
+
+export const updatePostContentX = async (post_id, new_content, user_id) => {
+    const raw_post = await readPostByPostId(post_id);
+    const post = mapToDomainType(raw_post);
+    if (confirmPostEditX(post_id, post.created_by, user_id, post_id)){
+        return await updatePostContent(post_id, new_content);
+    } else {
+        throw "User not authorised to update post content"
+    }
+}
+export const updatePostTitleX = async (post_id, new_title, user_id) => {
+    const raw_post = await readPostByPostId(post_id);
+    const post = mapToDomainType(raw_post);
+    if (confirmPostEditX(post_id, post.created_by, user_id, post_id)){
+        return await updatePostTitle(post_id, new_title);
+    } else {
+        throw "User not authorised to update post title"
+    }
+}
+
+export const readAllPostsByUser = async (user_id) => {
+    const raw_posts = await readPostsByUserId(user_id);
+    return raw_posts.map(mapToFrontEndType);
+}
+// Private methods
+
+const mapToFrontEndType = (raw) => {
+    return {
+        post_id : Number(raw['post_id']),
+        post_title : raw['post_title'],
+        post_content : raw['post_content'],
+        created_by : Number(raw['created_by']),
+        upvoteCount : createVoteArrayFromDatabase(raw['upvotearray']).length,
+        downvoteCount : createVoteArrayFromDatabase(raw['downvotearray']).length
+    }
+}
+
+const mapToDomainType = (raw) => {
+    return {
+        post_id : Number(raw['post_id']),
+        post_title : raw['post_title'],
+        post_content : raw['post_content'],
+        created_by : Number(raw['created_by']),
+        upvoteCount : createVoteArrayFromDatabase(raw['upvotearray']),
+        downvoteCount : createVoteArrayFromDatabase(raw['downvotearray'])
+    }
+}
+
+const confirmPostEditX = (post_id, post_user_id, editing_user_id, post_to_edit_id) => {
+    if (post_id === post_to_edit_id) {
+        if (post_user_id === editing_user_id) {
+            return true
+        } else {
+            throw "User not authorised to delete post"
+        }
+    } else {
+        return false
+    }
+}
+
 const createVoteArrayFromDatabase = (jsonString) => {
     let arr;
     try {
@@ -33,125 +136,7 @@ const createVoteArrayFromDatabase = (jsonString) => {
     return arr.map(Number);
 }
 
-export const upvotePostX = async (post_id, user_id) => {
-    let post_to_update = await readPostsByPostId(post_id);
-    if (!post_to_update){
-        throw ("Post not found when trying to upvote. Post Id : " + post_id );
-    } else {
-        let upArr = createVoteArrayFromDatabase(post_to_update['upvotearray'])
-        console.log("Checking : " + upArr + "For : " + user_id);
-        const exist = upArr.includes(user_id)
-        if (!exist){
-            upArr.push(user_id)
-            await updatePostUpvote(post_id, upArr);
-        } else {
-            throw "User already up voted this post";
-        }
-    }
-}
 
-export const downvotePostX = async (post_id, user_id) => {
-    let post_to_update = await readPostsByPostId(post_id);
-    if (!post_to_update){
-        throw ("Post not found when trying to upvote. Post Id : " + post_id );
-    } else {
-        let downArr = createVoteArrayFromDatabase(post_to_update['downvotearray'])
-        console.log("Checking : " + downArr + "For : " + user_id);
-        const exist = downArr.includes(user_id)
-        if (!exist){
-            downArr.push(user_id)
-            await updatePostDownVote(post_id, downArr);
-        } else {
-            throw "User already up voted this post";
-        }
-    }
-}
-
-export const deletePostX = async (post_id, user_id) => {
-    let posts = await readPosts();
-    let new_posts = posts.filter(p => confirmPostDeletionX(p, user_id, post_id))
-    return await rewriteToFileStream(filename, headerMap, new_posts);
-}
-
-export const updatePostContentX = async (post_id, new_content, user_id) => {
-    const posts = await readPosts();
-    let post_to_update = posts.find(p => p.post_id === post_id)
-    if (!post_to_update){
-        throw ("Post not found when trying to upvote. Post Id : " + post_id );
-    } else {
-        if (user_id === post_to_update.created_by){
-            let updated_post = {
-                post_id : post_to_update.post_id,
-                post_title: post_to_update.post_title,
-                post_content: new_content,
-                created_by: post_to_update.created_by,
-                upvoteArray: post_to_update.upvoteArray,
-                downvoteArray: post_to_update.downvoteArray
-            }
-            return await updatePostDatabase(updated_post);
-        } else {
-            throw "User not authorised to update post content"
-        }
-    }
-}
-export const updatePostTitleX = async (post_id, new_title, user_id) => {
-    const posts = await readPosts();
-    let post_to_update = posts.find(p => p.post_id === post_id)
-    if (!post_to_update){
-        throw ("Post not found when trying to upvote. Post Id : " + post_id );
-    } else {
-        if (user_id === post_to_update.created_by){
-            let updated_post = {
-                post_id : post_to_update.post_id,
-                post_title: new_title,
-                post_content: post_to_update.post_content,
-                created_by: post_to_update.created_by,
-                upvoteArray: post_to_update.upvoteArray,
-                downvoteArray: post_to_update.downvoteArray
-            }
-            return await updatePostDatabase(updated_post);
-        } else {
-            throw "User not authorised to update post title"
-        }
-    }
-}
-export const readAllPostsByUser = async (user_id) => {
-    const all_posts = await readPosts()
-    return all_posts.filter(p => p.created_by === user_id);
-}
-// Private methods
-const editPost = (post, new_post) => {
-    if (post.post_id === new_post.post_id){
-        return new_post
-    } else {
-        return post
-    }
-}
-const confirmPostDeletionX = (post, user_id, post_to_delete_id) => {
-    if (post.post_id === post_to_delete_id) {
-        if (post.created_by === user_id) {
-            return true
-        } else {
-            throw "User not authorised to delete post"
-        }
-    } else {
-        return false
-    }
-}
-const arrayToParsableString = (arr) => {
-    return arr.join('|');
-}
-const stringToArray = (s) => {
-    console.log("Parsing : " + s)
-    if (!s || s.trim() === '') {
-        console.log("Dealing with empty string");
-        return [];
-    }
-    else {
-        console.log("String found parsing to array");
-        return s.split('|').map(Number);
-    }
-}
 const readPostsByUserId = async (user_id) => {
     const posts =
         await sql`
@@ -164,7 +149,7 @@ const readPostsByUserId = async (user_id) => {
 
 }
 
-const readPostsByPostId = async (post_id) => {
+const readPostByPostId = async (post_id) => {
     const posts =
         await sql`
             select 
@@ -191,6 +176,7 @@ export const insertPost = async (post) => {
         `
     return post_id[0];
 }
+
 const updatePostUpvote = async (post_id, upvoteArr) => {
     const update = await
         sql `
@@ -198,7 +184,7 @@ const updatePostUpvote = async (post_id, upvoteArr) => {
             set upvoteArray = ${upvoteArr}
             where post_id = ${post_id}
         `;
-    return update;
+    return update[0];
 }
 
 const updatePostDownVote = async (post_id, downvoteArr) => {
@@ -208,5 +194,33 @@ const updatePostDownVote = async (post_id, downvoteArr) => {
             set downvoteArray = ${downvoteArr}
             where post_id = ${post_id}
         `;
-    return update;
+    return update[0];
+}
+
+const updatePostTitle = async (post_id, new_title) => {
+    const update = await
+        sql `
+         update posts
+            set post_title = ${new_title}
+            where post_id = ${post_id}
+        `;
+    return update[0];
+}
+
+const updatePostContent = async (post_id, new_content) => {
+    const update = await
+        sql `
+         update posts
+            set post_content = ${new_content}
+            where post_id = ${post_id}
+        `;
+    return update[0];
+}
+
+const deletePost = async (post_id) => {
+    const deletePost = await sql`
+            delete from posts
+            where post_id = ${post_id}
+        `
+    return deletePost;
 }
