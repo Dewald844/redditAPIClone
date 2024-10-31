@@ -2,6 +2,7 @@ import express from 'express';
 
 import * as user from "./Interface/user.js";
 import * as post from "./Interface/post.js";
+import * as comment from "./Interface/comment.js";
 
 const app = express();
 const port = 3000;
@@ -83,6 +84,24 @@ app.post('/post/update/content/:content/post/:post/user/:user', async (req, res)
     const user_id = Number(req.params.user);
     const new_content = req.params.content;
     const response = await post.updatePostContent(post_id, new_content, user_id);
+    res.send(response);
+});
+
+// ======================= Comment API calls =====================
+// Comment create API
+
+app.post('/comment/create/post/:post/user/:user/content/:content', async (req, res) => {
+    const post_id = Number(req.params.post);
+    const user_id = Number(req.params.user);
+    const content = req.params.content;
+    const response = await comment.createComment(post_id, user_id, content);
+    res.send(response);
+});
+
+// Read comments by post API
+app.get('/comment/read/post/:post', async (req, res) => {
+    const post_id = Number(req.params.post);
+    const response = await comment.readCommentsByPostId(post_id);
     res.send(response);
 });
 

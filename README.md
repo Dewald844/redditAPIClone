@@ -21,3 +21,23 @@ graph TD
     INTERFACE --> DOMAIN
     API --> INTERFACE
 ```
+
+
+## API Endpoints
+
+### User
+ - POST /user/login/email/{email}/password/{password}
+ - POST /user/create/name/{name}/email/{email}/password/{password}
+
+### Post
+ - POST /post/create/title/{title}/content/{title}/user/{userId}
+ - POST /post/upvote/post/{postId}/user/{userId}
+ - POST /post/downvote/post/{postId}/user/{userId}
+ - GET /post/read/user/{userId}
+ - DELETE /post/delete/post/{postId}/user/{userId}
+ - POST /post/update/title/{title}/post/{postId}/user/{userId}
+ - POST /post/update/content/{content}/post/{postId}/user/{userId}
+
+### Comment
+ - POST /comment/create/post/{postId}/user/{userId}/content/{content}
+ - GET /comment/read/post/{postId}

@@ -1,18 +1,18 @@
-class Comment {
-    constructor(id, user_id, post_id, content) {
-        this.comment_id = id;
-        this.user_id = user_id;
-        this.post_id = post_id;
-        this.content = content;
-        this.upvotes = 0;
-        this.downvotes = 0;
+import * as db from "../Database/comment.js";
+
+export const createComment = async (user_id, post_id, content) => {
+    const comment = {
+        user_id: user_id,
+        post_id: post_id,
+        content: content,
+        upvotes: [],
+        downvotes: []
     }
 
-    upvote() {
-        this.upvotes++;
-    }
+    const id = await db.insertComment(comment);
+    return id.Comment_id;
+}
 
-    downvote() {
-        this.downvotes++;
-    }
+export const readCommentsByPostId = async (post_id) => {
+    return await db.readCommentsByPostId(post_id);
 }
