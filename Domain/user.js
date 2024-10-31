@@ -1,39 +1,55 @@
 import bcrypt from 'bcrypt';
-import {readFromFileStream, writeToFileStream} from '../Helpers/databaseController.js';
-
+import {sql} from "../Helpers/databaseController.js";
 // User domain model and methods
 
 // Public methods
-export const createUser = async (id, name, email, password) => {
+export const createUser = async (name, email, password) => {
     const hashedPassword = await generateHashedPassword(password);
-    let user = {
-        user_id: id,
+    let new_user =  {
+        user_id: 1, // placeholder
         user_name: name,
         email_address: email,
         user_password: hashedPassword
     };
 
-    return user;
+    const new_id = await insertUser(new_user);
+    return new_id.user_id;
 }
 
-export const userLogin = async (enteredPassword, passwordFromDatabase) => {
-    if (await comparePassword(enteredPassword, passwordFromDatabase)) {
-        return true
+export const userLogin = async (email, password) => {
+
+    let user = await readUserByEmail(email);
+
+    if (!user) {
+        throw "User not found in database , please ensure email is correct";
     } else {
-        return "Invalid email or password";
+        if (await confirmLogin(password, user.user_password)) {
+            return [user.user_name, user.user_id];
+        } else {
+            throw "Email and or password does not match"
+        }
     }
 }
 
 // Private methods
 
 const comparePassword = async (password, hashed_password) => {
-    bcrypt.compare(password, hashed_password, (err, result) => {
-        if (err) {
-            console.log("Error encountered comparing user password" + err);
-        } else {
-            return result;
-        }
-    })
+    try {
+        const result = await bcrypt.compare(password, hashed_password);
+        console.log("Compare result : " + result);
+        return result;
+    } catch (err) {
+        console.log("Error encountered comparing user password: " + err);
+        return false;
+    }
+}
+
+const confirmLogin = async (enteredPassword, passwordFromDatabase) => {
+    if (await comparePassword(enteredPassword, passwordFromDatabase)) {
+        return true
+    } else {
+        throw "Invalid email or password";
+    }
 }
 
 const generateHashedPassword = async (password) => {
@@ -65,21 +81,26 @@ const generateHashedPassword = async (password) => {
     }
 };
 
-// Reader methods
-
-export const readUsers = async () => {
-    return await readFromFileStream('Database/users.csv');
+// Database methods
+export const readUserByEmail = async (email) => {
+    const users  =
+        await sql`
+            select 
+            user_id, user_name, email_address, user_password
+            from users
+            where email_address = ${email}
+        `
+    return users[0];
 }
 
-// Writer methods
-
-export const writeUsers = async (user) => {
-    const headerMap = [
-        {id: 'user_id', title: 'user_id'},
-        {id: 'user_name', title: 'user_name'},
-        {id: 'email_address', title: 'email_address'},
-        {id: 'user_password', title: 'user_password'}
-    ];
-
-    await writeToFileStream('Database/users.csv', headerMap, user);
+export const insertUser = async (user) => {
+    const new_id =
+        await sql`
+            insert into users
+               (user_name, email_address, user_password)
+            values 
+               (${user.user_name}, ${user.email_address}, ${user.user_password})
+            returning user_id
+        `
+    return new_id[0];
 }
