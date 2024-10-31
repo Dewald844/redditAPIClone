@@ -1,24 +1,24 @@
 import bcrypt from 'bcrypt';
-import {sql} from "../Helpers/databaseController.js";
-// User domain model and methods
+import * as db from '../Database/user.js';
+import * as helpers from "../Helpers/user.js";
 
-// Public methods
+// Public functions
+
 export const createUser = async (name, email, password) => {
-    const hashedPassword = await generateHashedPassword(password);
+    const hashedPassword = await helpers.generateHashedPassword(password);
     let new_user =  {
-        user_id: 1, // placeholder
         user_name: name,
         email_address: email,
         user_password: hashedPassword
     };
 
-    const new_id = await insertUser(new_user);
+    const new_id = await db.insertUser(new_user);
     return new_id.user_id;
 }
 
 export const userLogin = async (email, password) => {
 
-    let user = await readUserByEmail(email);
+    let user = await db.readUserByEmail(email);
 
     if (!user) {
         throw "User not found in database , please ensure email is correct";
@@ -31,7 +31,7 @@ export const userLogin = async (email, password) => {
     }
 }
 
-// Private methods
+// Private functions
 
 const comparePassword = async (password, hashed_password) => {
     try {
@@ -52,55 +52,3 @@ const confirmLogin = async (enteredPassword, passwordFromDatabase) => {
     }
 }
 
-const generateHashedPassword = async (password) => {
-    try {
-        const salt = await new Promise((resolve, reject) => {
-            bcrypt.genSalt(10, (err, salt) => {
-                if (err) {
-                    reject("Error encountered generating user password salt: " + err);
-                } else {
-                    resolve(salt);
-                }
-            });
-        });
-
-        const hash = await new Promise((resolve, reject) => {
-            bcrypt.hash(password, salt, (err, hash) => {
-                if (err) {
-                    reject("Error encountered hashing user password: " + err);
-                } else {
-                    resolve(hash);
-                }
-            });
-        });
-
-        return hash;
-    } catch (err) {
-        console.log(err);
-        throw err;
-    }
-};
-
-// Database methods
-export const readUserByEmail = async (email) => {
-    const users  =
-        await sql`
-            select 
-            user_id, user_name, email_address, user_password
-            from users
-            where email_address = ${email}
-        `
-    return users[0];
-}
-
-export const insertUser = async (user) => {
-    const new_id =
-        await sql`
-            insert into users
-               (user_name, email_address, user_password)
-            values 
-               (${user.user_name}, ${user.email_address}, ${user.user_password})
-            returning user_id
-        `
-    return new_id[0];
-}
