@@ -22,3 +22,19 @@ export const readCommentsByPostId = async (post_id) => {
     `
     return comments;
 }
+
+export const updateCommentUpvote = async (comment_id, upvotes) => {
+    await sql `
+        update comments
+        set upvotes = ${upvotes}
+        where comment_id = ${comment_id}
+    `
+}
+
+export const updateCommentDownVote = async (comment_id, downvotes) => {
+    await sql `
+        update comments
+        set downvotes = ${downvotes}
+        where comment_id = ${comment_id}
+    `
+}

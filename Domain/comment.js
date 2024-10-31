@@ -16,3 +16,4 @@ export const createComment = async (user_id, post_id, content) => {
 export const readCommentsByPostId = async (post_id) => {
     return await db.readCommentsByPostId(post_id);
 }
+

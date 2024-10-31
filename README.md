@@ -1,5 +1,5 @@
-# redditAPIClone
-Minimal reddit api clone (Backend only)
+# Reddit API Clone
+### Minimal reddit api clone (Backend only)
 
 ## Installation & setup
 1. Clone the repository
@@ -21,7 +21,6 @@ graph TD
     INTERFACE --> DOMAIN
     API --> INTERFACE
 ```
-
 
 ## API Endpoints
 
