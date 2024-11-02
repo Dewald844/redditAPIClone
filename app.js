@@ -60,6 +60,13 @@ app.get('/post/read/user/:user', async (req, res) => {
     res.send(response);
 })
 
+// Read all posts by user email
+app.get('/post/read/email/:email', async (req, res) => {
+    const email = req.params.email;
+    const response = await post.readPostByUserEmail(email);
+    res.send(response);
+})
+
 // Delete post API
 app.delete('/post/delete/post/:post/user/:user', async (req, res) => {
     const post_id = Number(req.params.post);
