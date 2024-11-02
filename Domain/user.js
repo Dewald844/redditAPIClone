@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import * as db from '../Database/user.js';
 import * as helpers from "../Helpers/user.js";
 
@@ -29,6 +28,14 @@ export const userLogin = async (email, password) => {
             throw "Email and or password does not match"
         }
     }
+}
+
+export const readUserIdByEmail = async (email) => {
+    const user =  await db.readUserByEmail(email);
+    if (!user) {
+        throw "User not found in database , please ensure email is correct";
+    }
+    return user['user_id'];
 }
 
 

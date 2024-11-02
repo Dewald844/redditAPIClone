@@ -1,4 +1,5 @@
 import * as post from '../Domain/post.js'
+import {readAllPostsByUserEmail} from "../Domain/post.js";
 
 export const createNewPost = async (title, content, user_id) => {
     try {
@@ -29,7 +30,7 @@ export const downvotePost = async (post_id, user_id) => {
 
 export const readAllPostsByUserId = async (user_id) => {
     try {
-        return await post.readAllPostsByUser(user_id);
+        return await post.readAllPostsByUserId(user_id);
     } catch (e) {
         return ('Error received trying to read posts : ' + e);
     }
@@ -59,5 +60,13 @@ export const updatePostContent = async (post_id, new_content, user_id) => {
         return ('Post content updated!');
     } catch (e) {
         return ('Error received trying to update post content : ' + e);
+    }
+}
+
+export const readPostByUserEmail = async (email) => {
+    try {
+        return await post.readAllPostsByUserEmail(email);
+    } catch (e) {
+        return ('Error received trying to read posts : ' + e);
     }
 }

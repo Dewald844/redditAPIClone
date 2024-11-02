@@ -1,5 +1,5 @@
 import * as db from "../Database/post.js";
-import * as comment_db from "../Database/comment.js";
+import * as user_domain from "../Domain/user.js";
 import * as helpers from "../Helpers/post.js";
 
 // public functions
@@ -79,9 +79,15 @@ export const updatePostTitleX = async (post_id, new_title, user_id) => {
     }
 }
 
-export const readAllPostsByUser = async (user_id) => {
+export const readAllPostsByUserId = async (user_id) => {
     const raw_posts = await db.readPostsByUserId(user_id);
     return await Promise.all(raw_posts.map(await helpers.mapToFrontEndType))
+}
+
+export const readAllPostsByUserEmail = async (email) => {
+    const user_id = await user_domain.readUserIdByEmail(email);
+    return await readAllPostsByUserId(user_id);
+
 }
 
 const confirmPostEditX = (post_id, post_user_id, editing_user_id, post_to_edit_id) => {
