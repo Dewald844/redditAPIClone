@@ -40,7 +40,7 @@ graph TD
 ### Comment
  - [x] POST /comment/create/post/{postId}/user/{userId}/content/{content}
  - [x] GET /comment/read/post/{postId}
- - [ ] DELETE /comment/delete/comment/{commentId}/user/{userId}
- - [ ] POST /comment/update/content/{content}/comment/{commentId}/user/{userId}
+ - [x] DELETE /comment/delete/comment/{commentId}/user/{userId}
+ - [x] POST /comment/update/content/{content}/comment/{commentId}/user/{userId}
  - [x] POST /comment/upvote/comment/{commentId}/user/{userId}
  - [x] POST /comment/downvote/comment/{commentId}/user/{userId}

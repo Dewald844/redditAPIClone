@@ -49,8 +49,40 @@ export const downvoteComment = async (comment_id, user_id) => {
     }
 }
 
+export const deleteComment = async (comment_id, user_id) => {
+    const db_comment = await readCommentById(comment_id);
+    const comment = helper.mapToFrontEndType(db_comment);
+    if (!comment) {
+        throw "Comment not found when trying to delete. Comment Id : " + comment_id;
+    } else {
+        if (confirmCommentEdit(comment_id, comment.user_id, user_id, comment_id)) {
+            await db.deleteComment(comment_id);
+        } else {
+            throw "User does not have permission to delete this comment";
+        }
+    }
+}
+
+export const updateCommentContent = async (comment_id, content, user_id) => {
+    const db_comment = await readCommentById(comment_id);
+    const comment = helper.mapToFrontEndType(db_comment);
+    if (!comment) {
+        throw "Comment not found when trying to update content. Comment Id : " + comment_id;
+    } else {
+        if (confirmCommentEdit(comment_id, comment.user_id, user_id, comment_id)) {
+            await db.updateCommentContent(comment_id, content);
+        } else {
+            throw "User does not have permission to update this comment";
+        }
+    }
+}
+
 const readCommentById = async (comment_id) => {
     const db_comment = await db.readCommentById(comment_id);
     return helper.mapToDomainType(db_comment);
+}
+
+const confirmCommentEdit = (comment_id, comment_user_id, editing_user_id, comment_to_edit_id) => {
+    return comment_id === comment_to_edit_id && comment_user_id === editing_user_id;
 }
 

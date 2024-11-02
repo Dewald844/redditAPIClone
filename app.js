@@ -121,6 +121,21 @@ app.post('/comment/downvote/comment/:comment/user/:user', async (req, res) => {
     res.send(response);
 });
 
+// Delete comment API
+app.delete('/comment/delete/comment/:comment/user/:user', async (req, res) => {
+    const comment_id = Number(req.params.comment);
+    const user_id = Number(req.params.user);
+    const response = await comment.deleteComment(comment_id, user_id);
+    res.send(response);
+});
+
+// Update comment content API
+app.post('/comment/update/comment/:comment/content/:content', async (req, res) => {
+    const comment_id = Number(req.params.comment);
+    const content = req.params.content;
+    const response = await comment.updateCommentContent(comment_id, content);
+    res.send(response);
+});
 
 // =======================  Startup code  =====================
 app.listen(port, () => {

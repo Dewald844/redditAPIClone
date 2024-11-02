@@ -83,16 +83,6 @@ export const readAllPostsByUser = async (user_id) => {
     return raw_posts.map(helpers.mapToFrontEndType);
 }
 
-// Private functions
-
 const confirmPostEditX = (post_id, post_user_id, editing_user_id, post_to_edit_id) => {
-    if (post_id === post_to_edit_id) {
-        if (post_user_id === editing_user_id) {
-            return true
-        } else {
-            throw "User not authorised to delete post"
-        }
-    } else {
-        return false
-    }
+    return post_user_id === editing_user_id && post_id === post_to_edit_id;
 }

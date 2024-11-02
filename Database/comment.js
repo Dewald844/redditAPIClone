@@ -45,3 +45,17 @@ export const updateCommentDownVote = async (comment_id, downvotes) => {
         where comment_id = ${comment_id}
     `
 }
+
+export const deleteComment = async (comment_id) => {
+    await sql `
+        delete from comments where comment_id = ${comment_id}
+    `
+}
+
+export const updateCommentContent = async (comment_id, content) => {
+    await sql `
+        update comments
+        set content = ${content}
+        where comment_id = ${comment_id}
+    `
+}

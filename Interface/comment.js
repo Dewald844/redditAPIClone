@@ -34,3 +34,21 @@ export const downvoteComment = async (comment_id, user_id) => {
         return ("Error while downvoting comment : " + e);
     }
 }
+
+export const deleteComment = async (comment_id, user_id) => {
+    try {
+        await comment.deleteComment(comment_id, user_id);
+        return ("Comment deleted!");
+    } catch (e) {
+        return ("Error while deleting comment : " + e);
+    }
+}
+
+export const updateCommentContent = async (comment_id, content) => {
+    try {
+        await comment.updateCommentContent(comment_id, content);
+        return ("Comment content updated!");
+    } catch (e) {
+        return ("Error while updating comment content : " + e);
+    }
+}
