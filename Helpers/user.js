@@ -27,3 +27,22 @@ export const generateHashedPassword = async (password) => {
         throw err;
     }
 };
+
+const comparePassword = async (password, hashed_password) => {
+    try {
+        const result = await bcrypt.compare(password, hashed_password);
+        console.log("Compare result : " + result);
+        return result;
+    } catch (err) {
+        console.log("Error encountered comparing user password: " + err);
+        return false;
+    }
+}
+
+export const confirmLogin = async (enteredPassword, passwordFromDatabase) => {
+    if (await comparePassword(enteredPassword, passwordFromDatabase)) {
+        return true
+    } else {
+        throw "Invalid email or password";
+    }
+}
