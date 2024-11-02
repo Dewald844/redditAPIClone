@@ -23,7 +23,7 @@ export const userLogin = async (email, password) => {
     if (!user) {
         throw "User not found in database , please ensure email is correct";
     } else {
-        if (await confirmLogin(password, user.user_password)) {
+        if (await helpers.confirmLogin(password, user.user_password)) {
             return [user.user_name, user.user_id];
         } else {
             throw "Email and or password does not match"
@@ -31,24 +31,4 @@ export const userLogin = async (email, password) => {
     }
 }
 
-// Private functions
-
-const comparePassword = async (password, hashed_password) => {
-    try {
-        const result = await bcrypt.compare(password, hashed_password);
-        console.log("Compare result : " + result);
-        return result;
-    } catch (err) {
-        console.log("Error encountered comparing user password: " + err);
-        return false;
-    }
-}
-
-const confirmLogin = async (enteredPassword, passwordFromDatabase) => {
-    if (await comparePassword(enteredPassword, passwordFromDatabase)) {
-        return true
-    } else {
-        throw "Invalid email or password";
-    }
-}
 

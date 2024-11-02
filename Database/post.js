@@ -1,13 +1,14 @@
 import {sql} from "./db.js";
 
 export const readPostsByUserId = async (user_id) => {
-
-     await sql`
+    const posts =
+        await sql`
             select 
                post_id,post_title, post_content, created_by, upvoteArray, downvoteArray
             from posts
             where created_by = ${user_id}   
         `
+    return posts;
 }
 
 export const readPostByPostId = async (post_id) => {
