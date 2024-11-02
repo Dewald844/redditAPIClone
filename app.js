@@ -105,6 +105,23 @@ app.get('/comment/read/post/:post', async (req, res) => {
     res.send(response);
 });
 
+// Upvote comment API
+app.post('/comment/upvote/comment/:comment/user/:user', async (req, res) => {
+    const comment_id = Number(req.params.comment);
+    const user_id = Number(req.params.user);
+    const response = await comment.upvoteComment(comment_id, user_id);
+    res.send(response);
+});
+
+// Downvote comment API
+app.post('/comment/downvote/comment/:comment/user/:user', async (req, res) => {
+    const comment_id = Number(req.params.comment);
+    const user_id = Number(req.params.user);
+    const response = await comment.downvoteComment(comment_id, user_id);
+    res.send(response);
+});
+
+
 // =======================  Startup code  =====================
 app.listen(port, () => {
      console.log(`Example app listening at http://localhost:${port}`);

@@ -2,8 +2,8 @@ import * as post from '../Domain/post.js'
 
 export const createNewPost = async (title, content, user_id) => {
     try {
-        const new_post = await post.createPost(title, content, user_id);
-        return ('Post created with id : ' + new_post);
+        await post.createPost(title, content, user_id);
+        return ('Post created!');
     } catch (e) {
         return ('Error received trying to create post : ' + e);
     }
@@ -47,6 +47,7 @@ export const deletePost = async (post_id, user_id) => {
 export const updatePostTitle = async (post_id, new_title, user_id) => {
     try {
         await post.updatePostTitleX (post_id, new_title, user_id);
+        return ('Post title updated!');
     } catch (e) {
         return ('Error received trying to update post title : ' + e);
     }
@@ -55,6 +56,7 @@ export const updatePostTitle = async (post_id, new_title, user_id) => {
 export const updatePostContent = async (post_id, new_content, user_id) => {
     try {
         await post.updatePostContentX (post_id, new_content, user_id);
+        return ('Post content updated!');
     } catch (e) {
         return ('Error received trying to update post content : ' + e);
     }
