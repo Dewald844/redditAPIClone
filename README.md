@@ -25,18 +25,22 @@ graph TD
 ## API Endpoints
 
 ### User
- - POST /user/login/email/{email}/password/{password}
- - POST /user/create/name/{name}/email/{email}/password/{password}
+ - [x] POST /user/login/email/{email}/password/{password}
+ - [x] POST /user/create/name/{name}/email/{email}/password/{password}
 
 ### Post
- - POST /post/create/title/{title}/content/{title}/user/{userId}
- - POST /post/upvote/post/{postId}/user/{userId}
- - POST /post/downvote/post/{postId}/user/{userId}
- - GET /post/read/user/{userId}
- - DELETE /post/delete/post/{postId}/user/{userId}
- - POST /post/update/title/{title}/post/{postId}/user/{userId}
- - POST /post/update/content/{content}/post/{postId}/user/{userId}
+ - [x] POST /post/create/title/{title}/content/{title}/user/{userId}
+ - [x] POST /post/upvote/post/{postId}/user/{userId}
+ - [x] POST /post/downvote/post/{postId}/user/{userId}
+ - [x] GET /post/read/user/{userId}
+ - [x] DELETE /post/delete/post/{postId}/user/{userId}
+ - [x] POST /post/update/title/{title}/post/{postId}/user/{userId}
+ - [x] POST /post/update/content/{content}/post/{postId}/user/{userId}
 
 ### Comment
- - POST /comment/create/post/{postId}/user/{userId}/content/{content}
- - GET /comment/read/post/{postId}
+ - [x] POST /comment/create/post/{postId}/user/{userId}/content/{content}
+ - [x] GET /comment/read/post/{postId}
+ - [ ] DELETE /comment/delete/comment/{commentId}/user/{userId}
+ - [ ] POST /comment/update/content/{content}/comment/{commentId}/user/{userId}
+ - [x] POST /comment/upvote/comment/{commentId}/user/{userId}
+ - [x] POST /comment/downvote/comment/{commentId}/user/{userId}
