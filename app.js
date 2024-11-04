@@ -21,6 +21,7 @@ app.post('/user/create', async (req, res) => {
 // User log in API
 app.post('/user/login', async (req, res) => {
     const { email, password } = req.body;
+    console.log(email);
     try {
         const response = await user.logInUser(email, password);
         res.send(response);
@@ -127,7 +128,7 @@ app.post('/comment/downvote', user.verifyToken, async (req, res) => {
 });
 
 // Delete comment API
-app.delete('/comment/delete', verifyToken, async (req, res) => {
+app.delete('/comment/delete', user.verifyToken, async (req, res) => {
     const { comment_id } = req.body;
     const user_id = req.user_id;
     const response = await comment.deleteComment(comment_id, user_id);
@@ -138,7 +139,7 @@ app.delete('/comment/delete', verifyToken, async (req, res) => {
 app.post('/comment/update', user.verifyToken, async (req, res) => {
     const { comment_id, content } = req.body;
     const user_id = req.user_id;
-    const response = await comment.updateCommentContent(comment_id, content);
+    const response = await comment.updateCommentContent(comment_id, content, user_id);
     res.send(response);
 });
 

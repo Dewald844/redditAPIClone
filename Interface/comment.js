@@ -44,9 +44,9 @@ export const deleteComment = async (comment_id, user_id) => {
     }
 }
 
-export const updateCommentContent = async (comment_id, content) => {
+export const updateCommentContent = async (comment_id, content, user_id) => {
     try {
-        await comment.updateCommentContent(comment_id, content);
+        await comment.updateCommentContent(comment_id, content, user_id);
         return ("Comment content updated!");
     } catch (e) {
         return ("Error while updating comment content : " + e);

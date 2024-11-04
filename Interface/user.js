@@ -16,24 +16,23 @@ export const createNewUser = async (name, email, password) => {
 
 export const logInUser = async (email, password) => {
     let user = await db.readUserByEmail(email);
+
     const jwt_salt = process.env.API_SECRET;
 
     if (!user) {
-        throw "User not found in database, please ensure email is correct";
+        return "User not found in database, please ensure email is correct";
     } else {
         if (await helpers.confirmLogin(password, user.user_password)) {
             const token = jwt.sign({ user_id: user.user_id, user_name: user.user_name }, jwt_salt, { expiresIn: '1h' });
             return { token };
         } else {
-            throw "Email and/or password does not match";
+            return "Email and/or password does not match";
         }
     }
 }
 
 export const verifyToken = (req, res, next) => {
-
     const jwt_salt = process.env.API_SECRET;
-
     const token = req.headers['authorization'];
 
     if (!token) {
@@ -42,7 +41,7 @@ export const verifyToken = (req, res, next) => {
 
     jwt.verify(token, jwt_salt, (err, decoded) => {
         if (err) {
-            return res.status(500).send({ error: 'Failed to authenticate token' });
+            return res.status(500).send({ error: 'Failed to authenticate token: ' + err });
         }
         req.user_id = decoded.user_id;
         next();
