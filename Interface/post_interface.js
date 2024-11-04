@@ -1,5 +1,5 @@
-import * as post from '../Domain/post.js'
-import {readAllPostsByUserEmail} from "../Domain/post.js";
+import * as post from '../Domain/post_domain.js'
+import {readAllPostsByUserEmail} from "../Domain/post_domain.js";
 
 export const createNewPost = async (title, content, user_id) => {
     try {

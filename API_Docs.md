@@ -1,5 +1,3 @@
-Sure, here is the documentation for each API call in Markdown syntax:
-
 # API Documentation
 
 ## User API

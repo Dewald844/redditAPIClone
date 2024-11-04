@@ -1,5 +1,5 @@
-import * as db from '../Database/user.js';
-import * as helpers from "../Helpers/user.js";
+import * as db from '../Database/user_database.js';
+import * as helpers from "../Helpers/user_helpers.js";
 
 // Public functions
 

@@ -1,5 +1,5 @@
-import * as db from "../Database/comment.js";
-import * as helper from "../Helpers/comment.js";
+import * as db from "../Database/comment_database.js";
+import * as helper from "../Helpers/comment_helpers.js";
 
 export const createComment = async (user_id, post_id, content) => {
     const comment = {
