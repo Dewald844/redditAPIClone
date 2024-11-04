@@ -1,4 +1,4 @@
-import * as comment from "../Domain/comment.js";
+import * as comment from "../Domain/comment_domain.js";
 
 export const createComment = async (id, user_id, post_id, content) => {
     try {

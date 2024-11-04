@@ -1,6 +1,6 @@
-import * as db from "../Database/post.js";
-import * as user_domain from "../Domain/user.js";
-import * as helpers from "../Helpers/post.js";
+import * as db from "../Database/post_database.js";
+import * as user_domain from "./user_domain.js";
+import * as helpers from "../Helpers/post_helpers.js";
 
 // public functions
 

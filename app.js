@@ -1,8 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import * as user from "./Interface/user.js";
-import * as post from "./Interface/post.js";
-import * as comment from "./Interface/comment.js";
+import * as user from "./Interface/user_interface.js";
+import * as post from "./Interface/post_interface.js";
+import * as comment from "./Interface/comment_interface.js";
 
 const app = express();
 const port = 3000;

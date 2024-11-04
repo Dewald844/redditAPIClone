@@ -1,5 +1,5 @@
-import * as comment_db from "../Database/comment.js";
-import * as comment_helpers from "../Helpers/comment.js";
+import * as comment_db from "../Database/comment_database.js";
+import * as comment_helpers from "./comment_helpers.js";
 
 export const createVoteArrayFromDatabase = (jsonString) => {
     let arr;
