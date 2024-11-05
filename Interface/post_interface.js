@@ -70,3 +70,11 @@ export const readPostByUserEmail = async (email) => {
         return ('Error received trying to read posts : ' + e);
     }
 }
+
+export const readPostActivityByUserId = async (user_id) => {
+    try {
+        return await post.readPostActivityByUserId(user_id);
+    } catch (e) {
+        return ('Error received trying to read posts : ' + e);
+    }
+}

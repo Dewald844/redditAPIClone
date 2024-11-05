@@ -94,6 +94,13 @@ app.post('/post/update/content', user.verifyToken, async (req, res) => {
     res.send(response);
 });
 
+// Read user activity API
+app.get('/post/activity', user.verifyToken, async (req, res) => {
+    const user_id = req.user_id;
+    const response = await post.readPostActivityByUserId(user_id);
+    res.send(response);
+});
+
 // ======================= Comment API calls =====================
 
 // Comment create API

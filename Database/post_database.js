@@ -85,3 +85,15 @@ export const deletePost = async (post_id) => {
         `
     return deletePost[0];
 }
+
+export const readPostActivityByUserId = async (user_id) => {
+    const posts =
+        await sql`
+            select * from user_votes 
+            where 
+               downvoter_id = ${user_id} or 
+               upvoter_id = ${user_id} or 
+               post_owner_id = ${user_id}
+        `
+    return posts;
+}

@@ -90,6 +90,11 @@ export const readAllPostsByUserEmail = async (email) => {
 
 }
 
+export const readPostActivityByUserId = async (user_id) => {
+    const raw_posts = await db.readPostsByUserId(user_id);
+    return await Promise.all(raw_posts.map(await helpers.mapToFrontEndType))
+}
+
 const confirmPostEditX = (post_id, post_user_id, editing_user_id, post_to_edit_id) => {
     return post_user_id === editing_user_id && post_id === post_to_edit_id;
 }

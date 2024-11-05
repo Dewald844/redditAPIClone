@@ -13,8 +13,12 @@ It would be advised to get your own,
 if needed please contact me via email
 
 1. DATABASE_URL
-2. JWT_SECRET
+2. API_SECRET
 
+## Calling API from post man 
+1. Create a user using the `Create User` API
+2. Login using the `User Login` API -> Return JWT toke and add it to the header { "authorization" : <token>}
+3. Use the token to create a post using the `Create Post` API
 
 ## Code structure
 ```mermaid
